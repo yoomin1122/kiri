@@ -15,7 +15,7 @@ intents.members = True
 
 bot = commands.Bot(command_prefix=["키리 ", "키리야 ", "키리", "키리야"], intents=intents)
 bot.remove_command("help")
-kb = DiscordpyKoreanbots(bot, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkzNjIzNDQ2NTM1NTc4MDE0NiIsImlhdCI6MTY0NDI5Mzk2Nn0.TVbUnlO_Po0xZY3cZIH9L7jEtVKMde8Kh2LA0kOXUcumQkSd6jiU4RY2fqsgkjCabXgZBmodIevUfPlijj0SBq9_hlSiG0gGvUJZVQKv5Br9v_ON20kjICvszt-REV1F3bQhoNTvDK6i92ad_Z7OVwKztYz9deb4EZqSEiMa-Dg', run_task=True)
+kb = DiscordpyKoreanbots(bot, '', run_task=True)
 slash = SlashCommand(bot, sync_commands=True)
 
 for filename in os.listdir("Cogs"):
