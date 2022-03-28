@@ -27,9 +27,9 @@ from discord_slash.model import SlashCommandOptionType
 from pp import *
 
 
-naver_dev_id = "njGmvJeVcCGUmkeiGlVh"
-naver_dev_pass = "CFVT5ESYhM"
-api_key = "AIzaSyAd6nM1fRbRXT2qTSd02nvyvySRAqMovwI"
+naver_dev_id = "
+naver_dev_pass = ""
+api_key = ""
 
 class Core(commands.Cog):
 
