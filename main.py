@@ -68,4 +68,4 @@ async def on_command_error(ctx, error):
         await ctx.send("서버 관리자가 아니여서 사용할수 없습니다!")
 
 
-bot.run('OTM2MjM0NDY1MzU1NzgwMTQ2.YfKOSg.4yJ1jCqsT_gS7so7jGKwGeBvqrE')
+bot.run('')
