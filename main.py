@@ -37,8 +37,7 @@ async def on_ready():
 
 @bot.event
 async def on_guild_join(guild):
-    for channel in guild.text_channels:
-        if channel.permissions_for(guild.me).send_messages:
+     if guild.system_channel:
           embed = discord.Embed(color=0xfa4f4f)
           embed.set_author(name="안녕하세요 저는 키리에요!", icon_url="https://i.ibb.co/wpJj64Y/image.png")
           embed.add_field(name="개발자", value="> YooMin1122\n> <@433183785564110848>")
@@ -47,9 +46,8 @@ async def on_guild_join(guild):
           embed.add_field(name="kiri 초대링크", value="[[초대하기]](http://invite.jambot.kro.kr)")
           embed.add_field(name="kiri 사용시 필수 권한", value="채널 관리하기, 서버 관리하기, 멤버 추방하기, 멤버 차단하기, 메세지 보내기,링크 첨부, 파일 첨부\n반응 추가하기, 외부 스티커 사용, @everyone @here 모든 역할 멘션하기, 메시지 관리하기, 메시지 기록 보기, 애플리케이션 명령어 사용",inline=False)
 
-          await channel.send(embed=embed)
+          await guild.system_channel.send(embed=embed)
           print(f"{guild.name}({guild.id})에 추가됨 현재 {len(bot.guilds)}서버에 있음")
-        break
 
 @bot.event
 async def on_guild_remove(guild):
