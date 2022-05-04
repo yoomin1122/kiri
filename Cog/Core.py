@@ -24,12 +24,11 @@ from discord_slash.model import ButtonStyle
 from discord_slash.context import MenuContext
 from discord_slash.model import ContextMenuType
 from discord_slash.model import SlashCommandOptionType
-from pp import *
 
 
-naver_dev_id = "
-naver_dev_pass = ""
-api_key = ""
+naver_dev_id = "token"
+naver_dev_pass = "token"
+api_key = "token"
 
 class Core(commands.Cog):
 
@@ -42,26 +41,6 @@ class Core(commands.Cog):
     @commands.command()
     async def print(self, ctx):
         await ctx.send("개발봇 Cogs/Core.py 출력완료")
-    @commands.command()
-    async def 급식(self, ctx):
-        to_tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)    #오늘 날짜에 하루를 더함
-        local_date2 = to_tomorrow.strftime("%Y.%m.%d")    #위에서 구한 날짜를 년.월.일 형식으로 저장
-        local_weekday2 = to_tomorrow.weekday()    #위에서  구한 날짜의 요일값을 저장
- 
-        l_diet = get_diet(2, local_date2, local_weekday2)    #점심식단을 파싱해옴
-        d_diet = get_diet(3, local_date2, local_weekday2)    #석식식단을 파싱해옴
- 
-        if len(l_diet) == 1:    #점심식단의 길이가 1일경우 = parser.py에서 식단이 없을경우 공백한자리를 반환함.
-            await ctx.send("급식이 없습니다.")    #급식이 없다고 메세지 보냄
-        elif len(d_diet) == 1:    #점심식단의 길이가 1이 아니고 석식식단의 길이가 1일경우 = 점심식단만 있을경우
-            lunch = local_date2 + " 중식\n" + l_diet    #날짜와 "중식"을 앞에 붙여서
-            await ctx.send(lunch)    #메세지 보냄
-        else:    #둘다 길이가 1이 아닐경우 = 점심, 석식 식단 모두 있을 경우
-            lunch = local_date2 + " 중식\n" + l_diet    #앞에 부가적인 내용을 붙여서
-            dinner = local_date2 + " 석식\n" + d_diet
-            await ctx.send(lunch)    #메세지를 보냄
-            await ctx.send(dinner)
-
     @commands.command(aliases=['개발자'])
     async def hellothisisverification(self, ctx):
         await ctx.send("YooMin1122#5973 (433183785564110848)")
@@ -95,7 +74,7 @@ class Core(commands.Cog):
     async def 핑(self, ctx):
         await ctx.send(embed=discord.Embed(title=f':ping_pong: 퐁! {round(round(self.bot.latency, 4) * 1000)}ms', color=0x6758f0))  
     
-    @commands.command(aliases=["help", "도움", "commands", "도움말"])
+    @commands.command(aliases=["도움", "commands", "도움말"])
     async def 명령어(self, ctx, c:str=None):
         if c is None:
             embed = discord.Embed(color=0xfa4f4f)
@@ -109,17 +88,6 @@ class Core(commands.Cog):
             embed.add_field(name=":musical_note: | 음악", value=f"> 재생, 나가, 스킵, 반복, 볼륨(현재 개발중)", inline=False)
             embed.add_field(name=":desktop: | 키리 공식 사이트", value="> [바로가기](http://kiribot.kro.kr)", inline=False)
         await ctx.reply(embed=embed, mention_author=False)
-
-    @commands.command(aliases=['찬반투표'])
-    async def 찬반(self, ctx, *, text):
-        embed = discord.Embed(color=0xfa4f4f)
-        embed.set_author(name="찬반투표")
-        embed.add_field(name="투표 설명", value=text, inline=False)
-        embed.add_field(name="찬성이라면", value=":thumbsup:를 눌러주세요")
-        embed.add_field(name="반대라면", value=f":thumbsdown:를 눌러주세요")
-        message = await ctx.send(embed=embed)
-        await message.add_reaction('👍')
-        await message.add_reaction('👎')
 
     @commands.command()
     async def 한영(self, ctx, *, text):
@@ -201,7 +169,6 @@ class Core(commands.Cog):
         embed.add_field(name="누적 확진자", value = format(data["korea"]["totalCnt"], ',')+"명")
         embed.add_field(name="일일 확진자", value = format(data["korea"]["incDec"], ',')+"명")
         embed.add_field(name="해외 유입", value = format(data["korea"]["incDecF"], ',')+"명")
-        embed.add_field(name="완치자", value = format(data["korea"]["recCnt"], ',')+"명")
         embed.add_field(name="사망자", value = format(data["korea"]["deathCnt"], ',')+"명")
         embed.set_footer(text="["+format(data["API"]["updateTime"])+"]")
         await ctx.send(embed=embed)
@@ -242,6 +209,19 @@ class Core(commands.Cog):
         embed1 = discord.Embed(title=f"`{search}`을(를) 검색했을때 결과입니다.", color = 0xfa4f4f)
         embed1.set_image(url=url)
         await ctx.reply(embed=embed1, mention_author=False)
-# 0xfa4f4f, 0x00FF7
+
+    @commands.command(aliases=['프사'])
+    @commands.cooldown(1, 30, commands.BucketType.user)
+    async def 아바타(self, ctx, user: discord.User):
+        embed = discord.Embed(color=0x6758f0, description=f"[링크]({user.avatar_url})")
+        embed.set_author(name=user.name)
+        embed.set_image(url=user.avatar_url)
+        await ctx.reply(embed=embed, mention_author=False)
+
+    @아바타.error
+    async def 아바타_error(self, ctx: commands.Context, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.reply(f"쿨타임이 {round(error.retry_after)}초 남았습니다")
+
 def setup(bot):
     bot.add_cog(Core(bot))
