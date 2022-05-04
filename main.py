@@ -1,3 +1,4 @@
+
 import os
 import discord
 from discord.ext import commands, tasks
@@ -10,12 +11,11 @@ from koreanbots.integrations.discord import DiscordpyKoreanbots
 from discord.ext.commands import Bot
 from discord_slash import SlashCommand
 
+
 intents = discord.Intents.default()
-intents.members = True
+
 
 bot = commands.Bot(command_prefix=["키리 ", "키리야 ", "키리", "키리야"], intents=intents)
-bot.remove_command("help")
-kb = DiscordpyKoreanbots(bot, '', run_task=True)
 slash = SlashCommand(bot, sync_commands=True)
 
 for filename in os.listdir("Cogs"):
@@ -66,4 +66,3 @@ async def on_command_error(ctx, error):
         await ctx.send("서버 관리자가 아니여서 사용할수 없습니다!")
 
 
-bot.run('')
