@@ -251,6 +251,6 @@ class Core(commands.Cog):
     async def 아바타_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandOnCooldown):
             await ctx.reply(f"쿨타임이 {round(error.retry_after)}초 남았습니다")
-# 0xfa4f4f, 0x00FF7
+
 def setup(bot):
     bot.add_cog(Core(bot))
