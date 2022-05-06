@@ -18,12 +18,8 @@ from discord.utils import get
 import requests
 from discord.ext.commands import Bot, Cog
 from discord_slash import cog_ext, SlashContext
-from discord_slash.utils.manage_components import  create_actionrow, create_button
-from discord_slash.utils.manage_commands import create_option
-from discord_slash.model import ButtonStyle
-from discord_slash.context import MenuContext
-from discord_slash.model import ContextMenuType
-from discord_slash.model import SlashCommandOptionType
+from discord_kartrider import kartrider as kart
+from discord_slash.utils.manage_commands import create_option, create_choice
 
 riot_token = ""
 naver_dev_id = ""
@@ -89,67 +85,49 @@ class Core(commands.Cog):
             embed.add_field(name=":desktop: | 키리 공식 사이트", value="> [바로가기](http://kiribot.kro.kr)", inline=False)
         await ctx.reply(embed=embed, mention_author=False)
 
-    @commands.command()
-    async def 한영(self, ctx, *, text):
-        add = translatetool.translate(f"{naver_dev_id}", f"{naver_dev_pass}")
-        # 언어: ko, en, ja, zh-CN, zh-TW, vi, id, th, de, ru, es, it, fr
-        add1 = await add.translate("ko", "en", f"{text}")
+    @cog_ext.cog_slash(name="번역", description="원하는 문장을 번역 해보세요!",
+        options=[
+            create_option(name="blanguage", description="작성할 문장의 언어를 선택 해주세요!", required=True, option_type=3,
+                choices=[
+                    create_choice(name="한국어",value="ko"),
+                    create_choice(name="영어",value="en"),
+                    create_choice(name="일본어",value="ja"),
+                    create_choice(name="중국어(간체)",value="zh-CN"),
+                    create_choice(name="베트남어",value="vi"),
+                    create_choice(name="인도네시아어",value="id"),
+                    create_choice(name="독일어",value="de"),
+                    create_choice(name="러시아어",value="ru"),
+                    create_choice(name="스페인어",value="es"),
+                    create_choice(name="이탈리아어",value="it"),
+                    create_choice(name="프랑스어",value="fr") ]),
+            create_option(name="alanguage", description="문장을 번역할 언어를 선택 해주세요!", required=True, option_type=3,
+                choices=[
+                    create_choice(name="한국어",value="ko"),
+                    create_choice(name="영어",value="en"),
+                    create_choice(name="일본어",value="ja"),
+                    create_choice(name="중국어(간체)",value="zh-CN"),
+                    create_choice(name="베트남어",value="vi"),
+                    create_choice(name="인도네시아어",value="id"),
+                    create_choice(name="독일어",value="de"),
+                    create_choice(name="러시아어",value="ru"),
+                    create_choice(name="스페인어",value="es"),
+                    create_choice(name="이탈리아어",value="it"),
+                    create_choice(name="프랑스어",value="fr") ]),
+            create_option(name="text", description="번역할 문장을 작성 해주세요!", required=True, option_type=3  )])
+
+    async def _translate(self, ctx: SlashContext, blanguage: str, alanguage: str, text: str):
+        add = translatetool.translate(naver_dev_id, naver_dev_pass)
+        add1 = await add.translate(blanguage, alanguage, text)
         embed = discord.Embed(color=0x6758f0)
-        embed.set_author(name="파파고 한국어 -> 영어 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
-        embed.add_field(name=":flag_kr: | 한국어", value=text, inline=False)
-        embed.add_field(name=":flag_us: | 영어", value=add1, inline=False)
-        embed.set_footer(text="약간의 오역이 있을수 있습니다.", icon_url="")
-        await ctx.reply(embed=embed, mention_author=False)
-    @commands.command()
-    async def 영한(self, ctx, *, text):
-        add = translatetool.translate(f"{naver_dev_id}", f"{naver_dev_pass}")
-        add1 = await add.translate("en", "ko", f"{text}")
-        embed = discord.Embed(color=0xfa4f4f)
-        embed.set_author(name="파파고 영어 -> 한국어 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
-        embed.add_field(name=":flag_us: | 영어", value=text, inline=False)
-        embed.add_field(name=":flag_kr: | 한국어", value=add1, inline=False)
-        embed.set_footer(text="약간의 오역이 있을수 있습니다.", icon_url="")
-        await ctx.reply(embed=embed, mention_author=False)
-    @commands.command()
-    async def 한일(self, ctx, *, text):
-        add = translatetool.translate(f"{naver_dev_id}", f"{naver_dev_pass}")
-        add1 = await add.translate("ko", "ja", f"{text}")
-        embed = discord.Embed(color=0x6758f0)
-        embed.set_author(name="파파고 한국어 -> 일본어 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
-        embed.add_field(name=":flag_kr: | 한국어", value=text, inline=False)
-        embed.add_field(name=":flag_jp: | 일본어", value=add1, inline=False)
-        embed.set_footer(text="약간의 오역이 있을수 있습니다.", icon_url="")
-        await ctx.reply(embed=embed, mention_author=False)
-    @commands.command()
-    async def 일한(self, ctx, *, text):
-        add = translatetool.translate(f"{naver_dev_id}", f"{naver_dev_pass}")
-        add1 = await add.translate("ja", "ko", f"{text}")
-        embed = discord.Embed(color=0xfa4f4f)
-        embed.set_author(name="파파고 일본어 -> 한국어 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
-        embed.add_field(name=":flag_jp: | 일본어", value=text, inline=False)
-        embed.add_field(name=":flag_kr: | 한국어", value=add1, inline=False)
-        embed.set_footer(text="약간의 오역이 있을수 있습니다.", icon_url="")
-        await ctx.reply(embed=embed, mention_author=False)
-    @commands.command()
-    async def 영일(self, ctx, *, text):
-        add = translatetool.translate(f"{naver_dev_id}", f"{naver_dev_pass}")
-        add1 = await add.translate("en", "ja", f"{text}")
-        embed = discord.Embed(color=0x6758f0)
-        embed.set_author(name="파파고 영어 -> 일본어 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
-        embed.add_field(name=":flag_us: | 영어", value=text, inline=False)
-        embed.add_field(name=":flag_jp: | 일본어", value=add1, inline=False)
-        embed.set_footer(text="약간의 오역이 있을수 있습니다.", icon_url="")
-        await ctx.reply(embed=embed, mention_author=False)
-    @commands.command()
-    async def 일영(self, ctx, *, text):
-        add = translatetool.translate(f"{naver_dev_id}", f"{naver_dev_pass}")
-        add1 = await add.translate("ja", "en", f"{text}")
-        embed = discord.Embed(color=0xfa4f4f)
-        embed.set_author(name="파파고 일본어 -> 영어 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
-        embed.add_field(name=":flag_jp: | 일본어", value=text, inline=False)
-        embed.add_field(name=":flag_us: | 영어", value=add1, inline=False)
-        embed.set_footer(text="약간의 오역이 있을수 있습니다.", icon_url="")
-        await ctx.reply(embed=embed, mention_author=False)
+        if blanguage == alanguage:
+            embed.set_author(name=f"error")
+            embed.add_field(name="원문과 번역할 언어가 같습니다 다시 선택해주세요", value="ex) 번역 한국어 영어", inline=False)
+        else:
+            embed.set_author(name=f"파파고 {blanguage} -> {alanguage} 번역", icon_url="https://papago.naver.com/static/img/papago_og.png")
+            embed.add_field(name=":arrow_down: | 원문", value=text, inline=False)
+            embed.add_field(name=":white_check_mark: | 번역문", value=add1, inline=False)
+            embed.set_footer(text="약간의 오역이 있을수 있습니다.")
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def 코로나(self, ctx):
