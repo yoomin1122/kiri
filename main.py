@@ -44,8 +44,8 @@ async def on_guild_join(guild):
           embed.add_field(name="Kiri봇 설명", value="키리는 관리, 번역, 대화 등등 많은 기능이 있는 봇 입니다!", inline=False)
           embed.add_field(name="kiri 서포트 서버", value="[[참여하기]](https://discord.gg/B6MjFDjz23)")
           embed.add_field(name="kiri 초대링크", value="[[초대하기]](http://invite.jambot.kro.kr)")
-          embed.add_field(name="kiri 사용시 필수 권한", value="채널 관리하기, 서버 관리하기, 멤버 추방하기, 멤버 차단하기, 메세지 보내기,링크 첨부, 파일 첨부\n반응 추가하기, 외부 스티커 사용, @everyone @here 모든 역할 멘션하기, 메시지 관리하기, 메시지 기록 보기, 애플리케이션 명령어 사용",inline=False)
-
+          embed.add_field(name="서비스 이용 약관", value="[[확인하기]](https://wadeinteractive.net/terms)")
+          embed.add_field(name="개인정보 보호정책", value="[[확인하기]](https://wadeinteractive.net/privacy)")
           await guild.system_channel.send(embed=embed)
           print(f"{guild.name}({guild.id})에 추가됨 현재 {len(bot.guilds)}서버에 있음")
 
