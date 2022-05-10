@@ -3,6 +3,11 @@ import re
 import discord
 import lavalink
 from discord.ext import commands
+from discord.ext.commands import Bot, Cog
+from discord_slash import cog_ext, SlashContext
+from discord_slash.utils.manage_commands import create_option, create_choice
+
+
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
@@ -136,6 +141,19 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
+    @cog_ext.cog_slash(name="나가", description="봇을 나가게 합니다",)
+
+    async def _musicout(self, ctx: SlashContext):
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        if not player.is_connected:
+            return await ctx.send('통화방에 없습니다')
+        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+            return await ctx.send('제가 있는 음성채널로 와주세요!!')
+        player.queue.clear()
+        await player.stop()
+        await ctx.voice_client.disconnect(force=True)
+        await ctx.send('통화방에서 나갔습니다')
+
     @commands.command(aliases=['dc'])
     async def 나가(self, ctx):
         """ Disconnects the player from the voice channel and clears its queue. """
@@ -163,7 +181,18 @@ class Music(commands.Cog):
             return await ctx.send('제가 있는 음성채널로 와주세요!!')
         await player.skip()
         await ctx.send('노래를 스킵하였습니다')
+    @cog_ext.cog_slash(name="스킵", description="노래를 스킵시킵니다",)
+    async def _musicskip(self, ctx: SlashContext):
+        """ Disconnects the player from the voice channel and clears its queue. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
+        if not player.is_connected:
+            return await ctx.send('통화방에 없습니다')
+
+        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+            return await ctx.send('제가 있는 음성채널로 와주세요!!')
+        await player.skip()
+        await ctx.send('노래를 스킵하였습니다')
     @commands.command(aliases=['rep'])
     async def 반복(self, ctx):
         """ Disconnects the player from the voice channel and clears its queue. """
