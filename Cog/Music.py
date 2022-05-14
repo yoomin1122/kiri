@@ -150,6 +150,8 @@ class Music(commands.Cog):
             return await ctx.send("노래를 틀고있지 않아요")
 
         position = lavalink.utils.format_time(player.position)
+        if player.current.stream:
+            duration = '🔴 LIVE'
         else:
             duration = lavalink.utils.format_time(player.current.duration)
         track = f'**[{player.current.title}]({player.current.uri})**\n({position}/{duration})'
