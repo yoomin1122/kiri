@@ -140,7 +140,28 @@ class Music(commands.Cog):
         await ctx.send(embed=embed)
         if not player.is_playing:
             await player.play()
+ 
+    @commands.command(aliases=['now', '현재재생', '지금재생', 'nowplaying'])
+    async def 지금노래(self, ctx):
+        """ Shows the currently playing track. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
+        if not player.current:
+            return await ctx.send("노래를 틀고있지 않아요")
+
+        position = lavalink.utils.format_time(player.position)
+        else:
+            duration = lavalink.utils.format_time(player.current.duration)
+        track = f'**[{player.current.title}]({player.current.uri})**\n({position}/{duration})'
+
+        embed = discord.Embed(color=0xfa4f4f, title="현재 재생되고 있는 노래", description=track)
+
+        if (currentTrackData := player.fetch("currentTrackData")) != None:
+            embed.set_thumbnail(url=currentTrackData["thumbnail"]["genius"])
+            embed.description += f"\n[LYRICS]({currentTrackData['links']['genius']})"
+
+        await ctx.send(embed=embed)
+            
     @cog_ext.cog_slash(name="나가", description="봇을 나가게 합니다",)
 
     async def _musicout(self, ctx: SlashContext):
