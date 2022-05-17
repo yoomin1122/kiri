@@ -1,4 +1,3 @@
-from asyncio.events import BaseDefaultEventLoopPolicy
 import os
 from pydoc import describe
 import discord
@@ -33,9 +32,6 @@ class Core(commands.Cog):
     @cog_ext.cog_slash(name="hellothisisverification")
     async def _test(self, ctx: SlashContext):
         await ctx.send("YooMin1122#5973 (433183785564110848)")
-    @commands.command()
-    async def print(self, ctx):
-        await ctx.send("개발봇 Cogs/Core.py 출력완료")
     @commands.command(aliases=['개발자'])
     async def hellothisisverification(self, ctx):
         await ctx.send("YooMin1122#5973 (433183785564110848)")
