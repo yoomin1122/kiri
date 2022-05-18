@@ -5,7 +5,6 @@ import lavalink
 from discord.ext import commands
 from discord.ext.commands import Bot, Cog
 from discord_slash import cog_ext, SlashContext
-from discord_kartrider import kartrider as kart
 from discord_slash.utils.manage_commands import create_option, create_choice
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
@@ -114,8 +113,8 @@ class Music(commands.Cog):
     @cog_ext.cog_slash(name="play", description="듣고싶은 노래를 틀어보세요!",
         options=[create_option(name="query", description="노래 제목을 적어주세요", required=True, option_type=3)])
     async def _musicstart(self, ctx, query: str):
-        LavalinkVoiceClient.connect
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        await ctx.author.voice.channel.connect(cls=LavalinkVoiceClient)
         query = query.strip('<>')
         if not url_rx.match(query):
             query = f'ytsearch:{query}'
@@ -203,7 +202,8 @@ class Music(commands.Cog):
     async def _musicnow(self, ctx: SlashContext):
         """ Shows the currently playing track. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
+        if not player.is_connected:
+            return await ctx.send('통화방에 없습니다')
         if not player.current:
             return await ctx.send("노래를 틀고있지 않아요")
 
