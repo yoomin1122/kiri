@@ -43,7 +43,7 @@ async def on_guild_join(guild):
           embed.add_field(name="개발자", value="> YooMin1122\n> <@433183785564110848>")
           embed.add_field(name="Kiri봇 설명", value="키리는 관리, 번역, 대화 등등 많은 기능이 있는 봇 입니다!", inline=False)
           embed.add_field(name="kiri 서포트 서버", value="[[참여하기]](https://discord.gg/B6MjFDjz23)")
-          embed.add_field(name="kiri 초대링크", value="[[초대하기]](http://invite.jambot.kro.kr)")
+          embed.add_field(name="kiri 초대링크", value="[[초대하기]](http://invite.kiribot.kro.kr)")
           embed.add_field(name="서비스 이용 약관", value="[[확인하기]](https://wadeinteractive.net/terms)")
           embed.add_field(name="개인정보 보호정책", value="[[확인하기]](https://wadeinteractive.net/privacy)")
           await guild.system_channel.send(embed=embed)
