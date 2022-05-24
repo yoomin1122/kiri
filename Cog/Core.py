@@ -61,6 +61,39 @@ class Core(commands.Cog):
             await ctx.send(f"{ctx.message.author.mention}님 30분이 지났습니다!")
         else: return await ctx.reply(f"{c}( 분)은 없습니다! \n1분, 3분, 5분, 10분, 30분 단위로 있으니 확인 부탁드려요")
 
+    @commands.command()
+    async def 카트유저(ctx, name):
+        user = "https://api.nexon.co.kr/kart/v1.0/users/nickname/" + name
+        API_KEY = ""
+        requests = requests.get(user, headers={"Authorization":API_KEY})
+        message = requests.text
+        data = json.loads(message)
+        #https://api.nexon.co.kr/kart/v1.0/users/nickname/%EB%87%8C%EC%A0%88%EC%98%A8%EC%9C%A0%EB%AF%BC
+
+        # id = kart.kartrider.id(name, API_KEY) # 유저의 ID가져오기
+        # level = kart.kartrider.level(name, API_KEY) # 유저의 level가져오기
+        # cart_text = kart.kartrider.cart_text(name, API_KEY) # 유저의 마지막에 탄 카트의 이름 가져오기
+        # cart_url = kart.kartrider.level(name, API_KEY) # 유저의 마지막에 탄 카트의 이름 가져오기
+        # game_type_text = kart.kartrider.game_type_text(name, API_KEY) # 유저의 마지막에 한 게임의 타입을 가져오기
+        # channel_name_text = kart.kartrider.channel_name_text(name, API_KEY) # 유저의 마지막에 한 게임의 채널 가져오기
+        # character_url = kart.kartrider.character_url(name, API_KEY) # 유저의 캐릭터 이미지 링크 가져오기
+        # character_text = kart.kartrider.character_text(name, API_KEY) # 유저의 캐릭터 이름 가져오기
+        # flying_pet_text = kart.kartrider.flying_pet_text(name, API_KEY) # 유저의 플라잉 팻 이름 가져오기
+        # pet_text = kart.kartrider.pet_text(name, API_KEY) # 유저의 팻 이름 가져오기
+        # license_text = kart.kartrider.license_text(name) # 유저의 캐릭터 텍스트 가져오기
+        # license_url = kart.kartrider.license_url(name) # 유저의 라이센스 이미지 링크 가져오기
+
+        # embed = discord.Embed(color=0xfa4f4f)
+        # embed.set_author(name="유저님의 라이더 정보를 불러왔어요!", icon_url="https://ssl.nexon.com/s2/game/kart/kart/emblemImage/8217/display.jpg")
+        # embed.add_field(name="아이디", value=f"{id}")
+        # embed.add_field(name="레벨", value=f"{level} 레벨")
+        # embed.add_field(name=":books:  | 번역", value=f"> 한영, 영한, 한일, 일한", inline=False)
+        # embed.add_field(name=":page_with_curl: | 일반", value=f"> 마법의 소라고동님 , 알람, 찬반, 단축링크, 여러 채팅들", inline=False)
+        # embed.add_field(name=":mag_right: | 검색", value=f"> 유튜브, 이미지, 아바타", inline=False)
+        # embed.add_field(name=":musical_note: | 음악", value=f"> 재생, 나가, 스킵, 반복, 볼륨(현재 개발중)", inline=False)
+        # embed.add_field(name=":desktop: | 키리 공식 사이트", value="> [바로가기](http://kiribot.kro.kr)", inline=False)
+        await ctx.reply(f"{data}", mention_author=False)
+
     @commands.command(aliases=['ping'])
     async def 핑(self, ctx):
         await ctx.send(embed=discord.Embed(title=f':ping_pong: 퐁! {round(round(self.bot.latency, 4) * 1000)}ms', color=0x6758f0))  
@@ -76,7 +109,7 @@ class Core(commands.Cog):
             embed.add_field(name=":books:  | 번역", value=f"> 한영, 영한, 한일, 일한", inline=False)
             embed.add_field(name=":page_with_curl: | 일반", value=f"> 마법의 소라고동님 , 알람, 찬반, 단축링크, 여러 채팅들", inline=False)
             embed.add_field(name=":mag_right: | 검색", value=f"> 유튜브, 이미지, 아바타", inline=False)
-            embed.add_field(name=":musical_note: | 음악", value=f"> 재생, 나가, 스킵, 반복, 볼륨(현재 개발중)", inline=False)
+            embed.add_field(name=":musical_note: | 음악", value=f"> 재생, 나가, 스킵, 반복, 볼륨, 현재노래", inline=False)
             embed.add_field(name=":desktop: | 키리 공식 사이트", value="> [바로가기](http://kiribot.kro.kr)", inline=False)
         await ctx.reply(embed=embed, mention_author=False)
 
@@ -124,7 +157,33 @@ class Core(commands.Cog):
             embed.set_footer(text="약간의 오역이 있을수 있습니다.")
         await ctx.send(embed=embed)
 
-    @commands.command()
+
+    @cog_ext.cog_slash(name="코로나", description="현재 코로나 상황을 확인해보세요!")
+
+    async def corona(self, ctx):
+      korea = "https://api.corona-19.kr/korea/beta/?serviceKey=" # 국내 코로나 발생 동향
+      apikey = "wPO1D7zh6oZqVEkC2fFc9NjlgRHUbeJyu"
+
+      response = requests.get(korea + apikey)
+      message = response.text
+      data = json.loads(message)
+
+
+      status = response.status_code
+
+      if status == 200: #국내 코로나 발생동향이 정상적으로 불러와졌을경우(http200)
+        embed = discord.Embed(color=0x6758f0)
+        embed.set_author(name="국내 코로나 19 현황")
+        embed.add_field(name="누적 확진자", value = format(data["korea"]["totalCnt"], ',')+"명")
+        embed.add_field(name="일일 확진자", value = format(data["korea"]["incDec"], ',')+"명")
+        embed.add_field(name="해외 유입", value = format(data["korea"]["incDecF"], ',')+"명")
+        embed.add_field(name="사망자", value = format(data["korea"]["deathCnt"], ',')+"명")
+        embed.set_footer(text="["+format(data["API"]["updateTime"])+"]")
+        await ctx.send(embed=embed)
+      else:
+        await ctx.send("error 다시 시도 해주세요")
+
+    @commands.command(aliases=["코로나현황", "corona"])
     async def 코로나(self, ctx):
       korea = "https://api.corona-19.kr/korea/beta/?serviceKey=" # 국내 코로나 발생 동향
       apikey = "wPO1D7zh6oZqVEkC2fFc9NjlgRHUbeJyu"
@@ -147,6 +206,50 @@ class Core(commands.Cog):
         await ctx.send(embed=embed)
       else:
         await ctx.send("error 다시 시도 해주세요")
+
+    @commands.command()
+    async def 마크(self, ctx, *, username):
+        mc = "https://ko.namemc.com/profile/" + username
+
+        response = requests.get(mc)
+        message = response.text
+        data = json.loads(message)
+        print(message)
+        # embed = discord.Embed(color=0x6758f0)
+        # embed.set_author(name="국내 코로나 19 현황")
+        # embed.add_field(name="누적 확진자", value = format(data["korea"]["totalCnt"], ',')+"명")
+        # embed.add_field(name="일일 확진자", value = format(data["korea"]["incDec"], ',')+"명")
+        # embed.add_field(name="해외 유입", value = format(data["korea"]["incDecF"], ',')+"명")
+        # embed.add_field(name="사망자", value = format(data["korea"]["deathCnt"], ',')+"명")
+        # embed.set_footer(text="["+format(data["API"]["updateTime"])+"]")
+        # await ctx.send(embed=embed)
+
+    @cog_ext.cog_slash(name="단축링크", description="원하는 링크를 줄여주세요!",
+        options=[create_option(name="text", description="긴 링크를 적어주세요!", required=True, option_type=3)])
+    async def shorturl(self, ctx, text):
+            client_id = f"{naver_dev_id}"
+            client_secret = f"{naver_dev_pass}" 
+            encText = urllib.parse.quote(f"{text}")
+            data = "url=" + encText
+            url = "https://openapi.naver.com/v1/util/shorturl"
+            request = urllib.request.Request(url)
+            request.add_header("X-Naver-Client-Id",client_id)
+            request.add_header("X-Naver-Client-Secret",client_secret)
+            response = urllib.request.urlopen(request, data=data.encode("utf-8"))
+            rescode = response.getcode()
+            if(rescode==200):
+                response_body = response.read()
+                response = response_body.decode('utf-8')
+                responseJson = json.loads(response)
+                embed = discord.Embed(color=0x6758f0)
+                embed.set_author(name="네이버 단축링크")
+                embed.add_field(name=":bookmark: | 원본 링크", value=text, inline=False)
+                embed.add_field(name=":link: | 단축된 링크", value=responseJson.get("result").get("url"), inline=False)
+                embed.set_footer(text="단축링크 아시는 구나", icon_url="")
+                await ctx.reply(embed=embed)
+            else:
+                print("Error Code:" + rescode)
+
 
     @commands.command(aliases=['shortlink'])
     async def 단축링크(self, ctx, text):
@@ -172,6 +275,17 @@ class Core(commands.Cog):
                 await ctx.reply(embed=embed)
             else:
                 print("Error Code:" + rescode)
+    @cog_ext.cog_slash(name="이미지", description="검색하고싶은 이미지를 쉽게 검색할수 있습니다",
+        options=[create_option(name="search", description="원하는 검색어를 적어주세요!", required=True, option_type=3)])
+    async def search_img(self, ctx, search):
+        ran = random.randint(0, 9)
+        resource = build("customsearch", "v1", developerKey=api_key).cse()
+        result = resource.list(q=f"{search}", cx="231a68bfb62e8c0f8", searchType="image").execute()
+        url = result["items"][ran]["link"]
+        embed = discord.Embed(title=f"`{search}`을(를) 검색했을때 결과입니다.", description="[링크](url)", color = 0xfa4f4f)
+        embed.set_image(url=url)
+        await ctx.reply(embed=embed, mention_author=False)
+
 
     @commands.command(aliases=["img", "사진", "photo"])
     async def 이미지(self, ctx, *, search):
@@ -179,10 +293,41 @@ class Core(commands.Cog):
         resource = build("customsearch", "v1", developerKey=api_key).cse()
         result = resource.list(q=f"{search}", cx="231a68bfb62e8c0f8", searchType="image").execute()
         url = result["items"][ran]["link"]
-        embed1 = discord.Embed(title=f"`{search}`을(를) 검색했을때 결과입니다.", color = 0xfa4f4f)
-        embed1.set_image(url=url)
-        await ctx.reply(embed=embed1, mention_author=False)
+        embed = discord.Embed(title=f"`{search}`을(를) 검색했을때 결과입니다.", description="[링크](url)", color = 0xfa4f4f)
+        embed.set_image(url=url)
+        await ctx.reply(embed=embed, mention_author=False)
 
+    @commands.command()
+    async def 롤(self, ctx, *, UserName):
+        UserInfoUrl = "https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + UserName
+        res = requests.get(UserInfoUrl, headers={"X-Riot-Token":riot_token})
+        resjs = json.loads(res.text)
+
+        if res.status_code == 200:
+            UserIconUrl = "http://ddragon.leagueoflegends.com/cdn/11.3.1/img/profileicon/{}.png"
+            embed = discord.Embed(title=f"{resjs['name']} 님의 플레이어 정보", description=f"**{resjs['summonerLevel']} LEVEL**", color=0xFF9900)
+
+            UserInfoUrl_2 = "https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/" + resjs["id"]
+            res_2 = requests.get(UserInfoUrl_2, headers={"X-Riot-Token":riot_token})
+            res_2js = json.loads(res_2.text)
+            if res_2js == []:
+                embed.add_field(name=f"{resjs['name']} 님은 언랭크입니다.", value="**언랭크 유저의 정보는 출력하지 않습니다.**", inline=False)
+            else:
+                for rank in res_2js:
+                    if rank["queueType"] == "RANKED_SOLO_5x5":
+                        embed.add_field(name="솔로랭크", value=f"**티어 : {rank['tier']} {rank['rank']} - {rank['leaguePoints']} LP**\n"
+                                                           f"**승 / 패 : {rank['wins']} 승 {rank['losses']} 패**", inline=True)
+
+                    else:
+                        embed.add_field(name="자유랭크", value=f"**티어 : {rank['tier']} {rank['rank']} - {rank['leaguePoints']} LP**\n"
+                                                            f"**승 / 패 : {rank['wins']} 승 {rank['losses']} 패**", inline=True)
+
+            embed.set_author(name=resjs['name'], url=f"http://fow.kr/find/{UserName.replace(' ', '')}", icon_url=UserIconUrl.format(resjs['profileIconId']))
+            await ctx.send(embed=embed)
+
+        else:
+            error = discord.Embed(title="존재하지 않는 소환사명입니다.\n다시 한번 확인해주세요.", color=0xFF9900)
+            await ctx.send(embed=error)
 
 
     @commands.command(aliases=['프사'])
@@ -197,6 +342,6 @@ class Core(commands.Cog):
     async def 아바타_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandOnCooldown):
             await ctx.reply(f"쿨타임이 {round(error.retry_after)}초 남았습니다")
-
+            
 def setup(bot):
     bot.add_cog(Core(bot))
